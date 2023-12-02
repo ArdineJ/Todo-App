@@ -21,26 +21,31 @@ class TaskAdapter(
 
     //TODO 8 : Create and initialize ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        throw NotImplementedError("Not yet implemented")
-//        val view:View = LayoutInflater.from(parent.context)
+        val view:View = LayoutInflater.from(parent.context).inflate(R.layout.task_item, parent, false)
+        return TaskViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = getItem(position) as Task
         //TODO 9 : Bind data to ViewHolder (You can run app to check)
+        holder.bind(task)
+
         when {
             //TODO 10 : Display title based on status using TitleTextView
             task.isCompleted -> {
                 //DONE
                 holder.cbComplete.isChecked = true
+                holder.tvTitle.text = task.title
             }
             task.dueDateMillis < System.currentTimeMillis() -> {
                 //OVERDUE
                 holder.cbComplete.isChecked = false
+                holder.tvTitle.text = task.title
             }
             else -> {
                 //NORMAL
                 holder.cbComplete.isChecked = false
+                holder.tvTitle.text = task.title
             }
         }
     }

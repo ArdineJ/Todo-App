@@ -39,8 +39,8 @@ class TaskActivity : AppCompatActivity() {
         }
 
         //TODO 6 : Initiate RecyclerView with LayoutManager
-        val recycler_view = findViewById<RecyclerView>(R.id.rv_task)
-        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler = findViewById(R.id.rv_task)
+        recycler.layoutManager = LinearLayoutManager(this)
 
         initAction()
 
