@@ -6,6 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dicoding.todoapp.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -15,7 +19,7 @@ import java.io.InputStreamReader
 import java.util.concurrent.Executors
 
 //TODO 3 : Define room database class and prepopulate database using JSON
-@Database(entities = [Task::class], version = 1, exportSchema = false)
+@Database(entities = [Task::class], version = 2, exportSchema = false)
 abstract class TaskDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
@@ -31,13 +35,21 @@ abstract class TaskDatabase : RoomDatabase() {
                     context.applicationContext,
                     TaskDatabase::class.java,
                     "task.db"
-                ).addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        Executors.newSingleThreadExecutor().execute{
-                            fillWithStartingData(context,getInstance(context).taskDao())
+                )
+                    .fallbackToDestructiveMigration()
+                    .addCallback(object : Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            super.onCreate(db)
+                            Executors.newSingleThreadExecutor().execute{
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    INSTANCE?.let {
+                                        fillWithStartingData(context,it.taskDao())
+                                    }
+                                }
+                            }
                         }
                     }
-                }).build()
+                ).build()
                 INSTANCE = instance
                 instance
                 }

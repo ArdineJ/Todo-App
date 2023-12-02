@@ -17,22 +17,22 @@ interface TaskDao {
     @RawQuery(observedEntities = [Task::class])
     fun getTasks(query: SupportSQLiteQuery): DataSource.Factory<Int, Task>
 
-    @Query("SELECT * FROM Task WHERE id = :taskId")
+    @Query("SELECT * FROM tasks WHERE id = :taskId")
     fun getTaskById(taskId: Int): LiveData<Task>
 
-    @Query("SELECT * FROM Task WHERE isCompleted = 0 ORDER BY dueDateMillis ASC LIMIT 1")
+    @Query("SELECT * FROM tasks ORDER BY dueDateMillis ASC LIMIT 1")
     fun getNearestActiveTask(): Task
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     suspend fun insertTask(task: Task): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     fun insertAll(vararg tasks: Task)
 
     @Delete
     suspend fun deleteTask(task: Task)
 
-    @Query("UPDATE Task SET isCompleted = :completed WHERE id = :taskId")
+    @Query("UPDATE tasks SET isCompleted = :completed WHERE id = :taskId")
     suspend fun updateCompleted(taskId: Int, completed: Boolean)
 
 }
