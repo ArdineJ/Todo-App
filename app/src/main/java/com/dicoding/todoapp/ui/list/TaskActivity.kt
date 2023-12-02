@@ -54,9 +54,10 @@ class TaskActivity : AppCompatActivity() {
 
     private fun showRecyclerView(task: PagedList<Task>) {
         //TODO 7 : Submit pagedList to adapter and update database when onCheckChange
-        val adapter = TaskAdapter { task, isChecked ->
+        val adapter = TaskAdapter( onCheckedChange =  {  task, isChecked ->
             taskViewModel.completeTask(task, isChecked)
-        }
+        })
+        recycler.adapter = adapter
         adapter.submitList(task)
     }
 

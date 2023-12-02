@@ -21,7 +21,7 @@ class TaskAdapter(
 
     //TODO 8 : Create and initialize ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        val view:View = LayoutInflater.from(parent.context).inflate(R.layout.task_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.task_item, parent, false)
         return TaskViewHolder(view)
     }
 
@@ -35,17 +35,17 @@ class TaskAdapter(
             task.isCompleted -> {
                 //DONE
                 holder.cbComplete.isChecked = true
-                holder.tvTitle.text = task.title
+                holder.tvTitle.state = 1
             }
             task.dueDateMillis < System.currentTimeMillis() -> {
                 //OVERDUE
                 holder.cbComplete.isChecked = false
-                holder.tvTitle.text = task.title
+                holder.tvTitle.state = 2
             }
             else -> {
                 //NORMAL
                 holder.cbComplete.isChecked = false
-                holder.tvTitle.text = task.title
+                holder.tvTitle.state = 0
             }
         }
     }
