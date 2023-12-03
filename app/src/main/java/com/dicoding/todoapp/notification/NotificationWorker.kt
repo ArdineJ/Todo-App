@@ -7,7 +7,9 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
+import android.preference.PreferenceManager
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -38,26 +40,32 @@ class NotificationWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, p
 
     override fun doWork(): Result {
         //TODO 14 : If notification preference on, get nearest active task from repository and show notification with pending intent
-        val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val nearestTask = TaskRepository.getInstance(applicationContext).getNearestActiveTask()
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val pref = sharedPref.getBoolean(applicationContext.getString(R.string.pref_key_notify), false)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = channelName
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel(TASK_ID, name, importance)
-            notificationManager.createNotificationChannel(mChannel)
+        if (pref){
+            val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val nearestTask = TaskRepository.getInstance(applicationContext).getNearestActiveTask()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val name = channelName?: "Channel Name"
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
+                val mChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance)
+                notificationManager.createNotificationChannel(mChannel)
+            }
+
+            val mbuilder = NotificationCompat.Builder(applicationContext,NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(nearestTask.title)
+                .setContentText(nearestTask.description)
+                .setContentIntent(getPendingIntent(nearestTask))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+
+            with(NotificationManagerCompat.from(applicationContext)) {
+                notificationManager.notify(0, mbuilder.build())
+            }
         }
-
-        var mbuilder = NotificationCompat.Builder(applicationContext, TASK_ID)
-            .setSmallIcon(R.drawable.ic_notifications)
-            .setContentTitle(nearestTask.title)
-            .setContentText(nearestTask.description)
-            .setContentIntent(getPendingIntent(nearestTask))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-            .build()
-
-        notificationManager.notify(1, mbuilder)
         return Result.success()
     }
 

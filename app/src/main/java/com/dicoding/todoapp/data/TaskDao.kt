@@ -5,7 +5,6 @@ import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
@@ -20,7 +19,7 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     fun getTaskById(taskId: Int): LiveData<Task>
 
-    @Query("SELECT * FROM tasks ORDER BY dueDateMillis ASC LIMIT 1")
+    @Query("SELECT * FROM tasks WHERE isCompleted=0 ORDER BY dueDateMillis ASC LIMIT 1")
     fun getNearestActiveTask(): Task
 
     @Insert
