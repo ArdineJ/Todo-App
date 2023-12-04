@@ -20,6 +20,6 @@ data class Task(
     @ColumnInfo(name = "dueDateMillis")
     val dueDateMillis: Long,
 
-    @ColumnInfo(name = "isCompleted")
+    @ColumnInfo(name = "Completed")
     val isCompleted: Boolean = false
 )

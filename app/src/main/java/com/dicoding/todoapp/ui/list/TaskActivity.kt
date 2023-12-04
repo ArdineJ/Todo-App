@@ -2,6 +2,7 @@ package com.dicoding.todoapp.ui.list
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -41,6 +42,7 @@ class TaskActivity : AppCompatActivity() {
         //TODO 6 : Initiate RecyclerView with LayoutManager
         recycler = findViewById(R.id.rv_task)
         recycler.layoutManager = LinearLayoutManager(this)
+        recycler.setHasFixedSize(true)
 
         initAction()
 
@@ -55,9 +57,9 @@ class TaskActivity : AppCompatActivity() {
 
     private fun showRecyclerView(task: PagedList<Task>) {
         //TODO 7 : Submit pagedList to adapter and update database when onCheckChange
-        val adapter = TaskAdapter( onCheckedChange =  {  tasks, isChecked ->
+        val adapter = TaskAdapter { tasks, isChecked ->
             taskViewModel.completeTask(tasks, isChecked)
-        })
+        }
         recycler.adapter = adapter
         adapter.submitList(task)
     }
@@ -104,6 +106,7 @@ class TaskActivity : AppCompatActivity() {
                         else -> TasksFilterType.ALL_TASKS
                     }
                 )
+                Log.d("FILTER NOT", "FILTER WORKING?")
                 true
             }
             show()
