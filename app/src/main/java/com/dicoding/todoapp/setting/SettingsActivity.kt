@@ -63,6 +63,8 @@ class SettingsActivity : AppCompatActivity() {
                             OneTimeWorkRequest.Companion.from(NotificationWorker::class.java)
                         )
                     workManager.enqueue()
+                } else {
+                    WorkManager.getInstance().cancelUniqueWork(channelName)
                 }
 
                 true

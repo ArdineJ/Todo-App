@@ -7,9 +7,7 @@
     import kotlinx.coroutines.launch
 
     class AddTaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
-        fun insertTask(task: Task) {
-            viewModelScope.launch {
-                taskRepository.insertTask(task)
-            }
+        fun insertTask(task: Task) = viewModelScope.launch {
+            taskRepository.insertTask(task)
         }
     }

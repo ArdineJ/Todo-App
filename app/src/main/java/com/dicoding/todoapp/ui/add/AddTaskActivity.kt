@@ -11,13 +11,13 @@ import com.dicoding.todoapp.R
 import com.dicoding.todoapp.data.Task
 import com.dicoding.todoapp.ui.ViewModelFactory
 import com.dicoding.todoapp.utils.DatePickerFragment
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListener {
     private var dueDateMillis: Long = System.currentTimeMillis()
     private lateinit var taskAddViewModel: AddTaskViewModel
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +28,11 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
         val factory = ViewModelFactory.getInstance(this)
         taskAddViewModel = ViewModelProvider(this, factory)[AddTaskViewModel::class.java]
 
+//        taskAddViewModel.snackbarText.observe(this, { event ->
+//            event.getContentIfNotHandled()?.let { messageId ->
+//                showSnackbar(getString(messageId))
+//            }
+//        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -42,17 +47,28 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
                 val title: TextView = findViewById(R.id.add_ed_title)
                 val description: TextView = findViewById(R.id.add_ed_description)
 
-                taskAddViewModel.insertTask(Task(
-                        title = title.text.toString(),
-                        description = description.text.toString(),
-                        dueDateMillis = dueDateMillis
+                if (title.text.isNullOrBlank() || description.text.isNullOrBlank()) {
+                    showSnackbar(R.string.empty_task_message)
+                }
+                else {
+                    taskAddViewModel.insertTask(
+                        Task(
+                            title = title.text.toString(),
+                            description = description.text.toString(),
+                            dueDateMillis = dueDateMillis
+                        )
                     )
-                )
-                finish()
+                    finish()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showSnackbar(message: Int) {
+        val rootView: View = findViewById(android.R.id.content)
+        Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show()
     }
 
     fun showDatePicker(view: View) {
