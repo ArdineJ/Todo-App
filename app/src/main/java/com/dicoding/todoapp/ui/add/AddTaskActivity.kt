@@ -28,11 +28,6 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
         val factory = ViewModelFactory.getInstance(this)
         taskAddViewModel = ViewModelProvider(this, factory)[AddTaskViewModel::class.java]
 
-//        taskAddViewModel.snackbarText.observe(this, { event ->
-//            event.getContentIfNotHandled()?.let { messageId ->
-//                showSnackbar(getString(messageId))
-//            }
-//        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
