@@ -43,7 +43,8 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
                 val description: TextView = findViewById(R.id.add_ed_description)
 
                 if (title.text.isNullOrBlank() || description.text.isNullOrBlank()) {
-                    showSnackbar(R.string.empty_task_message)
+                    val rootView: View = findViewById(android.R.id.content)
+                    Snackbar.make(rootView, R.string.empty_task_message, Snackbar.LENGTH_SHORT).show()
                 }
                 else {
                     taskAddViewModel.insertTask(
@@ -59,11 +60,6 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun showSnackbar(message: Int) {
-        val rootView: View = findViewById(android.R.id.content)
-        Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show()
     }
 
     fun showDatePicker(view: View) {
